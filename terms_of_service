@@ -1,0 +1,375 @@
+
+what are my next steps
+
+
+Thought process
+Thought process
+Here's the concrete path to get this fully live, in order:
+
+1. Register your TikTok app. Go to developers.tiktok.com, sign up, and register an app (Manage apps → Connect an app).
+
+2. Add the Content Posting API product to the app, and under Login Kit register the redirect URI http://127.0.0.1:8722/callback/ (or the wildcard form http://127.0.0.1:*/callback/).
+
+3. Copy your Client key and Client secret into credentials/.env:
+
+TIKTOK_CLIENT_KEY=...
+TIKTOK_CLIENT_SECRET=...
+4. Request the video.publish scope and submit for review. This is the step that actually matters for hands-off posting — you'll need a privacy policy URL and a demo video showing the full login + post flow. This is also where you decide: submit for the full audit (unlocks real public posting) or skip it and only ever get private/self-only posts. Given you want hands-off, go for the audit. Expect roughly 1–6 weeks.
+
+5. While waiting, do a dry run of the login flow. Once your app shows as connected (even pre-approval, the OAuth login itself should work), run:
+
+python cli.py tiktok-auth
+This confirms the redirect URI and PKCE flow are wired correctly before you're relying on it for real. Posting calls will likely still fail with a scope/permission error until the review completes — that's expected.
+
+6. Once approved, test one clip manually before trusting the automation with it:
+
+python cli.py tiktok-upload path/to/clip.mp4 --mode direct --title "test caption #test"
+Check what privacy_level comes back — if it's SELF_ONLY instead of PUBLIC_TO_EVERYONE, the audit hasn't fully cleared yet (or your account itself is private).
+
+7. Flip the switches in config/config.yaml:
+
+yaml
+tiktok:
+  enabled: true
+  auto_send_after_youtube: true
+  mode: "direct"
+Same checkbox is available in the Streamlit sidebar if you'd rather toggle it there per-session.
+
+8. Run a normal automation pass (python cli.py auto-daily, or a manual clip through the app) and confirm both a YouTube and a TikTok post land with matching titles/hashtags.
+
+Everything past step 4 is already built and tested — steps 1–4 are the only parts that require you to act in TikTok's dashboard, and I can't do those for you since they need your own account/business details. Let me know once you've got the client key/secret and I'll help debug the first real login.
+
+client key awvv656hlus8zcog
+client secret GHG48U8Bxn4KOoDXWBSR5AysaAa8mtvj
+
+
+Read a file, edited a file, ran a command
+Read a file, edited a file, ran a command
+Saved to credentials/.env as TIKTOK_CLIENT_KEY / TIKTOK_CLIENT_SECRET and confirmed they load correctly. I won't repeat the actual values back here since they're sensitive.
+
+Next step: in the TikTok developer portal, make sure that app has the Content Posting API product added and http://127.0.0.1:8722/callback/ registered as a Login Kit redirect URI (from step 2 in my last message). Once that's done, run:
+
+python cli.py tiktok-auth
+This opens a browser for you to log into TikTok and approve the app — it'll cache a token afterward. If the app hasn't been submitted for review yet, the login itself should still complete fine; posting calls are what'll fail with a permission error until video.publish is approved. Let me know what happens when you run it.
+
+fill out the required fields for me 
+
+Products
+[Docs](https://developers.tiktok.com/doc/overview)[Support](https://developers.tiktok.com/portal/support)[Blog](https://developers.tiktok.com/blogs)
+Developer Portal
+Unison Clips
+ProductionSandbox
+URL properties
+Production
+Draft
+[App details](https://developers.tiktok.com/app/7658968659091589128/pending#app-details)
+[Credentials](https://developers.tiktok.com/app/7658968659091589128/pending#credentials)
+[Basic information](https://developers.tiktok.com/app/7658968659091589128/pending#basic-info)
+[App review](https://developers.tiktok.com/app/7658968659091589128/pending#app-review)
+[Products](https://developers.tiktok.com/app/7658968659091589128/pending#products)
+[Login Kit](https://developers.tiktok.com/app/7658968659091589128/pending#login)
+[Content Posting API](https://developers.tiktok.com/app/7658968659091589128/pending#content_posting_api)
+[Scopes](https://developers.tiktok.com/app/7658968659091589128/pending#scopes)
+Import
+This form has 7 errors.
+[Review](https://developers.tiktok.com/app/7658968659091589128/pending#app_basic_info.icon_url)
+Save
+Submit for review
+App details
+Credentials
+Client key
+•••••••••••••••••
+Client secret
+•••••••••••••••••
+Basic information
+App icon *
+This will be displayed publicly to TikTok users.
+Requirements: 1024px x 1024px Up to 5MB JPEG, JPG, or PNG formats
+App icon is required
+App name *
+This will be displayed to TikTok users
+12 / 50
+Category *
+Please select a category
+Description *
+Describe what your website or mobile app does and how it works. This will be displayed to TikTok users. Examples:
+
+A website that sells pet supplies.
+Manage all your social media content in one place.
+0 / 120
+Please fill out the required field
+Terms of Service URL *
+Link to your app or website's official Terms of Service
+Please fill out the required field
+Privacy Policy URL *
+Link to your app or website's official privacy policy
+Please fill out the required field
+Platforms *
+Web
+Desktop
+Android
+iOS
+Please select at least one platform
+App review
+Required information for app submissionPlease review the [App Review Guidelines](https://developers.tiktok.com/doc/app-review-guidelines) for more details.
+Explain how each product and scope works within your app or website. If submitting a revision, include the changes in this version. *
+Products
+Login Kit
+Content Posting API
+Scopes
+user.info.basic
+video.upload
+0 / 1000
+Please fill out the required field
+Upload at least one demo video that shows the complete end-to-end flow of the integration with TikTok. *
+Upload
+
+Accepted formats: mp4, mov
+Maximum 5 files, up to 50MB each
+For example, it should demonstrate how you use TikTok for Developers' capabilities, such as Login Kit, Share Kit, Display API, Content Posting API, and the relevant scopes.
+If your app has not been approved before, you are required to use a sandbox environment on the Developer Portal to demonstrate the integration.
+The demo video should showcase the website or app where the features will actually be integrated.
+All selected products and scopes must be clearly demonstrated in the video. If you don't need certain products or scopes, make sure to remove them before review. Otherwise, it will delay the review result.
+The video should clearly show the user interface and user interactions.
+If you intend to integrate with a web app, make sure the domain of the website shown in the demo video matches the website URL you provide.
+If you intend to integrate with a mobile app, the demo video should start by showing the app being opened.
+GTA 5 CROSS MAP on FOOT Manhunt - part 01.mp4
+Products
+Add products
+Login Kit
+Redirect URI
+Add up to 10 Redirect URIs. Users will be redirected to this path after they have authorized your app with TikTok.
+Web
+Desktop
+Android
+iOS
+Turn on [Configure for Web](https://developers.tiktok.com/app/7658968659091589128/pending#platform-configuration) to add your redirect URIs
+Content Posting API
+By default, Upload to TikTok is enabled, allowing you to upload content to TikTok as a draft for creators to further edit and post.
+Direct Post
+Directly post content to authorized users' profiles.
+Verify domainsThe video/content can be posted in two ways, push_by_file and pull_by_url. To enable pull_by_url, you have to verify your domains. Check out the [Media Transfer Guide](https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide/) to learn more.
+Verify
+Add products
+Scopes
+Add scopes
+user.info.basic
+Read a user's profile info (open id, avatar, display name ...)
+Included in Login Kit
+video.upload
+Share content to creator's account as a draft to further edit and post in TikTok.
+Included in Content Posting API
+History
+Changelog
+Review comments
+All
+Products
+
+[Share Kit](https://developers.tiktok.com/products/share-kit/)
+[Login Kit](https://developers.tiktok.com/products/login-kit/)
+[Content Posting API](https://developers.tiktok.com/products/content-posting-api/)
+[Research API](https://developers.tiktok.com/products/research-api/)
+[Display API](https://developers.tiktok.com/doc/display-api-get-started/)
+
+[Embed Videos](https://developers.tiktok.com/doc/embed-videos/)
+[Data Portability API](https://developers.tiktok.com/products/data-portability-api/)
+[Green Screen Kit](https://developers.tiktok.com/products/share-kit#green-screen)
+[Commercial Content API](https://developers.tiktok.com/products/commercial-content-api)
+Other platforms
+
+[TikTok Embeds](https://www.tiktok.com/embed)
+[TikTok for Business](https://www.tiktok.com/business)
+[Advertise on TikTok](https://www.tiktok.com/business/&attr_source=tt_official_site&attr_medium=tt_official_site_guidance)
+[TikTok Creative Center](https://ads.tiktok.com/business/creativecenter/)
+[TikTok.com](https://www.tiktok.com/)
+Company
+
+[About TikTok](https://www.tiktok.com/about)
+[Newsroom](https://newsroom.tiktok.com/)
+[Contact](https://www.tiktok.com/about/contact)
+[Careers](https://careers.tiktok.com/)
+[ByteDance](https://www.bytedance.com/)
+[Transparency Center](https://www.tiktok.com/transparency) © 2026 TikTok[Terms of Service](https://www.tiktok.com/legal/page/global/tik-tok-developer-terms-of-service/en)[Privacy Policy](https://www.tiktok.com/legal/page/global/partner-privacy-policy/en)[Resources & Legal](https://developers.tiktok.com/app/7658968659091589128/pending#site-footer) GTA 5 CROSS MAP on FOOT Manhunt - part 01.mp4 uploaded successfully. AI Assistant Hello, I'm TikTok Developer Platform AI Assistant. 🎉 TikTok for Developers AI bot is an experimental AI chatbot. Mistakes are possible, responses are not professional advice. Avoid sharing confidential or personal information. Your data may be shared with third-party providers to generate responses. By interacting with this AI bot, you agree to [TikTok Developer's Terms of Service](https://www.tiktok.com/legal/tik-tok-developer-terms-of-service) and acknowledge you have read our [Privacy Policy](https://www.tiktok.com/legal/partner-privacy-policy) Select a question category to start chat: Mini GameShort DramaOthers Contact Support Responses are by AI. Mistakes are possible
+Show more
+
+Ran 7 commands, read 5 files, created 2 files
+Ran 7 commands, read 5 files, created 2 files
+I can't type directly into that TikTok page, but here's exactly what to put in each field.
+
+App icon — I generated one from your Team Unison bear mascot, cropped square and centered on white (1024×1024, shared above). Upload that.
+
+App name — leave as "Unison Clips", that's fine as-is.
+
+Category — pick "Entertainment" (or the closest equivalent in their dropdown).
+
+Description (120 char limit):
+
+Automatically clips highlight moments from gaming videos into short vertical clips and uploads them to YouTube and TikTok.
+Terms of Service URL / Privacy Policy URL — these have to be real hosted pages, I can't fabricate working links. I wrote both above as terms_of_service.md and privacy_policy.md — fastest way to get a live URL for each: paste the text into a Notion page and use Share → Publish to web, or a GitHub Pages repo if you have one. Paste whichever URLs you get into those two fields.
+
+Platforms — check Desktop. That matches the login flow I built (loopback redirect on your machine, not a website or mobile app).
+
+App review — explain how each product/scope works (1000 char limit):
+
+This app is for personal use only, automating my own YouTube and TikTok accounts. Login Kit authenticates me via OAuth (user.info.basic scope) so the app can identify my account. The Content Posting API (video.upload scope) lets the app upload finished short-form video clips to my TikTok inbox as drafts, which I then review and post myself from the TikTok app. The attached demo video shows the full flow: logging in via Login Kit, generating a clip, and sending it through the Content Posting API.
+Login Kit → Redirect URI — turn on "Configure for Desktop" (not Web), then add:
+
+http://127.0.0.1:8722/callback/
+Demo video — already uploaded, nothing to do there.
+
+One thing to decide: right now you're only set up for video.upload (draft mode), which matches the demo you already recorded. If you want the fully hands-off Direct Post automation we built, you'd also need to turn on the Direct Post toggle under Content Posting API, add the video.publish scope, and make sure your demo video shows that flow too (TikTok requires every requested scope to be visibly demonstrated) — otherwise the review will likely bounce it back. Given you already have a matching demo for draft mode, I'd submit this version first to get something approved quickly, then submit a revision for video.publish once you're ready to record that flow too.
+
+
+Tiktok app icon
+Image · PNG 
+
+Privacy policy
+Document · MD 
+
+Terms of service
+Document · MD 
+how to do Terms of Service URL / Privacy Policy URL
+
+
+Thought process
+Thought process
+Two quick options — pick whichever you already use:
+
+Notion (fastest, no coding):
+
+Go to notion.so and open (or create) a page.
+Make two pages: "Privacy Policy" and "Terms of Service", and paste in the text from the two files I gave you.
+On each page, click Share (top right) → toggle Share to web (or "Publish") → copy the link it gives you.
+Paste those two links into TikTok's Privacy Policy URL and Terms of Service URL fields.
+GitHub Pages (if you already have a GitHub account):
+
+Create a new public repo, e.g. unison-clips-legal.
+Add two files, privacy.html and terms.html, with the text wrapped in basic HTML (<html><body><pre>...your text...</pre></body></html> works fine).
+Go to the repo's Settings → Pages, set source to the main branch / root, save.
+After ~1 minute your pages are live at https://<your-username>.github.io/unison-clips-legal/privacy.html and .../terms.html.
+Either way, just make sure the page is actually public (not requiring login to view) — TikTok's review process checks that the URL loads. Notion is the quicker path if you don't already have a GitHub habit.
+
+notion how to do
+
+
+Thought process
+Thought process
+Here's the exact walkthrough:
+
+Go to notion.so in your browser. If you don't have an account, click "Sign up" (free, just needs an email or Google login).
+Once inside, click "+ New page" in the left sidebar.
+Give it a title, e.g. "Privacy Policy — Unison Clips".
+Paste the privacy policy text (from the privacy_policy.md file I gave you) into the page body. Notion will auto-format the headers.
+In the top-right corner of the page, click the "Share" button.
+In the Share panel, find the toggle labeled "Share to web" (sometimes shown as "Publish"). Turn it on.
+Notion will generate a public link (looks like https://yourname.notion.site/Privacy-Policy-...). Click "Copy link".
+Repeat steps 2–7 for a second page titled "Terms of Service", pasting in the terms_of_service.md text instead.
+Paste the two copied links into TikTok's Privacy Policy URL and Terms of Service URL fields.
+One thing to double check: after publishing, open each link in a private/incognito browser window to confirm it loads without asking you to log in — TikTok's reviewer needs to be able to view it directly.
+
+This URL is not verified.
+Verify URL properties
+
+
+Thought process
+Thought process
+Good catch — this is where Notion falls short. TikTok's verification is file-based: it gives you a signature file to download, and you have to make that exact file reachable at your URL. Notion's notion.site domain is shared platform infrastructure — you don't get to place arbitrary files at arbitrary paths there, so verification will never pass on a Notion link.
+
+You need hosting where you control the actual file structure. GitHub Pages is the standard free option for this:
+
+Go to github.com, sign in (or sign up free if you don't have an account).
+Create a new public repository, e.g. unison-clips-legal.
+Add privacy.html and terms.html to it (paste your policy text wrapped in basic HTML tags), and commit.
+In the repo, go to Settings → Pages, set "Source" to the main branch / root folder, and save. After ~1 minute, your files are live at:
+https://<your-username>.github.io/unison-clips-legal/privacy.html
+https://<your-username>.github.io/unison-clips-legal/terms.html
+Put those two URLs into TikTok's Privacy Policy URL / Terms of Service URL fields, and save.
+Back on the app page, click "Verify URL properties" → choose "URL prefix" (not Domain — you don't own the github.io domain itself, only your specific repo path) → enter the full URL (e.g. the privacy.html one) → TikTok gives you a signature file to download.
+Add that exact signature file to the same GitHub repo (same commit/push flow as step 3), so it's reachable at the path TikTok expects. Then click Verify.
+Repeat step 6–7 for the second URL (Terms of Service), and for your Web/Desktop site URL if TikTok asks for one too — each gets its own signature file, placed in the same repo.
+If you don't already use GitHub and want something even faster with zero git commands, Netlify Drop (app.netlify.com/drop) works the same way — you drag a folder of files into the browser and get a live URL where you fully control the file paths, so the same signature-file step works there too. Let me know which one you'd rather use and I can tailor the exact file names for you once you're at that step.
+
+when i add the notion urls
+
+how to Add privacy.html and terms.html to it (paste your policy text wrapped in basic HTML tags), and commit.
+
+
+Thought process
+Thought process
+Here's the exact walkthrough using GitHub's website (no command line needed):
+
+Open your repo (unison-clips-legal) on github.com.
+Click the "Add file" button (top right of the file list) → "Create new file".
+In the filename box at the top, type: privacy.html
+Paste this into the big text box below it:
+html
+<!DOCTYPE html>
+<html>
+<head><title>Privacy Policy - Unison Clips</title></head>
+<body>
+<h1>Privacy Policy - Unison Clips</h1>
+<p>Last updated: July 2026</p>
+<p>Unison Clips is a personal-use tool operated solely by its owner ("we", "us"). It is not distributed to the public and does not collect data from any third party.</p>
+<h2>What we access</h2>
+<p><b>YouTube:</b> We use the YouTube Data API to search for and download publicly available video content, and to upload finished clips to the owner's own YouTube channel via OAuth. We do not access other users' private YouTube data.</p>
+<p><b>TikTok:</b> We use the TikTok Content Posting API, authorized via OAuth, solely to upload or post video clips to the owner's own authorized TikTok account. We do not access, store, or share any other TikTok user's data.</p>
+<h2>What we store</h2>
+<p>We store OAuth tokens (access/refresh tokens) locally on the owner's own device to maintain login sessions. We do not transmit these tokens to any third party. We do not sell, share, or monetize any data.</p>
+<h2>Data retention</h2>
+<p>Locally cached tokens and video files remain on the owner's device until manually deleted. No data is retained on any external server operated by us.</p>
+<h2>Contact</h2>
+<p>For questions about this policy, contact: peter1esler@gmail.com</p>
+</body>
+</html>
+Scroll to the bottom, click the green "Commit changes..." button, then confirm ("Commit directly to the main branch" should already be selected) → click "Commit changes".
+Repeat steps 2–5 for a second file named terms.html, pasting this instead:
+html
+<!DOCTYPE html>
+<html>
+<head><title>Terms of Service - Unison Clips</title></head>
+<body>
+<h1>Terms of Service - Unison Clips</h1>
+<p>Last updated: July 2026</p>
+<p>Unison Clips is a personal-use automation tool operated solely by its owner. It is not offered as a public service and has no other users or accounts besides the owner's own YouTube and TikTok accounts.</p>
+<h2>Use of the software</h2>
+<p>This tool downloads publicly available video content, generates short-form vertical clips, and uploads/posts those clips to the owner's own YouTube and TikTok accounts, authorized directly by the owner via each platform's official OAuth login.</p>
+<h2>No warranty</h2>
+<p>This software is provided as-is, with no warranty of any kind, for personal use only.</p>
+<h2>Compliance</h2>
+<p>Use of this tool is subject to and must comply with YouTube's Terms of Service and TikTok's Developer Terms of Service and Music Usage Confirmation at all times.</p>
+<h2>Contact</h2>
+<p>For questions, contact: peter1esler@gmail.com</p>
+</body>
+</html>
+Go to Settings → Pages, set Source to the main branch and / (root) folder, save. Give it about a minute, then your two pages will be live at https://<your-username>.github.io/unison-clips-legal/privacy.html and .../terms.html.
+
+
+
+
+
+Claude is AI and can make mistakes. Please double-check responses. Give us feedback
+
+
+Terms of service · MD
+# Terms of Service -- Unison Clips
+ 
+Last updated: July 2026
+ 
+Unison Clips is a personal-use automation tool operated solely by its owner. It is not offered as a public service and has no other users or accounts besides the owner's own YouTube and TikTok accounts.
+ 
+## Use of the software
+ 
+This tool downloads publicly available video content, generates short-form vertical clips, and uploads/posts those clips to the owner's own YouTube and TikTok accounts, authorized directly by the owner via each platform's official OAuth login.
+ 
+## No warranty
+ 
+This software is provided as-is, with no warranty of any kind, for personal use only.
+ 
+## Compliance
+ 
+Use of this tool is subject to and must comply with YouTube's Terms of Service and TikTok's Developer Terms of Service and Music Usage Confirmation at all times.
+ 
+## Contact
+ 
+For questions, contact: peter1esler@gmail.com
+ 
